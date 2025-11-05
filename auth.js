@@ -1,5 +1,16 @@
 // auth.js
-import { auth, db } from './firebase.js';
+import {
+  auth,
+  db,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged,
+  ref,
+  set,
+  get
+} from './firebase.js';
 
 // DOM references
 const tabSignin = document.getElementById('tab-signin');
@@ -58,7 +69,7 @@ formSignin?.addEventListener('submit', async (e) => {
   const email = document.getElementById('si-email').value.trim();
   const password = document.getElementById('si-password').value;
   try {
-    const credential = await auth.signInWithEmailAndPassword(email, password);
+    const credential = await signInWithEmailAndPassword(auth, email, password);
     const user = credential.user;
     showStatus('Signed in successfully. Redirecting...', 'ok');
     updateCurrentUserUI(user);
