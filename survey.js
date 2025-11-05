@@ -16,14 +16,35 @@ window.sendOTP = async function () {
   const email = document.getElementById('userEmail').value.trim();
   if (!email) return alert("Enter a valid email");
 
-  otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+  // Generate secure 6-digit OTP
+  const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Save OTP to Firebase
   await set(ref(db, 'otp/' + email.replace(/\W/g, '')), {
     code: otpCode,
     timestamp: Date.now()
   });
 
-  alert("OTP sent: " + otpCode); // Replace with email service in production
+  // Send OTP via email using Apps Script
+  sendOtpEmail(email, otpCode);
+
+  alert("OTP has been sent to your email.");
 };
+
+// Email sending function via Google Apps Script
+function sendOtpEmail(email, otp) {
+  const formData = new URLSearchParams();
+  formData.append("email", email);
+  formData.append("otp", otp);
+
+  fetch("https://script.google.com/macros/s/AKfycbxI84TuS41YTQE3KcWCe4tjVsRKtSsw6Q_l8xvGA_0Iv0ySHnpew3Im7P6YYNiwld_jgw/exec", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(console.log)
+  .catch(console.error);
+}
 
 document.getElementById('surveyForm').addEventListener('submit', async (e) => {
   e.preventDefault();
