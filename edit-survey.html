@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Survey Form</title>
+  <link rel="stylesheet" href="edit-survey.css" />
+</head>
+<body>
+  <div id="editSurvey">
+    <h2>🛠️ Edit Survey Form</h2>
+    <form id="surveyForm">
+      <div id="questionContainer">
+        <!-- Questions will be dynamically inserted here -->
+      </div>
+
+      <div class="actions">
+        <button type="button" onclick="showAddQuestionModal()">➕ Add Question</button>
+        <button type="submit">💾 Submit Updated Form</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal for adding new question -->
+  <div id="addModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Add New Question</h3>
+      <label>Question Label:</label>
+      <input type="text" id="newLabel" placeholder="e.g. What is your risk appetite?" />
+
+      <label>Input Type:</label>
+      <select id="newType">
+        <option value="text">Text Input</option>
+        <option value="textarea">Textarea</option>
+        <option value="select">Select Dropdown</option>
+      </select>
+
+      <label id="optionsLabel" class="hidden">Options (comma-separated):</label>
+      <input type="text" id="newOptions" class="hidden" placeholder="e.g. Low, Medium, High" />
+
+      <div class="modal-actions">
+        <button onclick="addNewQuestion()">Add</button>
+        <button onclick="closeAddQuestionModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="edit-survey.js"></script>
+</body>
+</html>
