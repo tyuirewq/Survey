@@ -48,6 +48,7 @@ function sendOtpEmail(email, otp) {
 
 document.getElementById('surveyForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const email = document.getElementById('userEmail').value.trim();
   const otpInput = document.getElementById('userOTP').value.trim();
   const otpRef = ref(db, 'otp/' + email.replace(/\W/g, ''));
@@ -66,11 +67,10 @@ document.getElementById('surveyForm').addEventListener('submit', async (e) => {
     type: e.target.type.value,
     submittedAt: Date.now()
   };
-  const responsesRef = ref(db, 'responses/' + currentUser.uid);
-  const newResponseRef = push(responsesRef); // creates a unique child
-  await set(newResponseRef, formData);
 
-  //await set(ref(db, 'responses/' + currentUser.uid), formData);
+  const timestampKey = Date.now().toString(); // Unique key
+  await set(ref(db, 'responses/' + currentUser.uid + '/' + timestampKey), formData);
+
   alert("Survey submitted successfully!");
   e.target.reset();
 });
