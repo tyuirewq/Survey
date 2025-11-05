@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Login with Firebase</title>
+  <title>Admin Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Firebase compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-database-compat.js"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --bg: #0f172a;
@@ -183,168 +183,8 @@
     </div>
   </div>
 
-  <script>
-    // Replace with your Firebase project config
-    const firebaseConfig = {
-  apiKey: "AIzaSyDh09dzHrlEjm2TFkAy490Jdx8ay_KgI00",
-  authDomain: "questionnaire-f0638.firebaseapp.com",
-  databaseURL: "https://questionnaire-f0638-default-rtdb.firebaseio.com",
-  projectId: "questionnaire-f0638",
-  storageBucket: "questionnaire-f0638.firebasestorage.app",
-  messagingSenderId: "869731192665",
-  appId: "1:869731192665:web:209f53e0def000c6644648",
-  measurementId: "G-P5JC47G3Z2"
-};
+ <script src="firebase.js"></script>
+  <script src="auth.js"></script>
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
-
-    // UI helpers
-    const statusBox = document.getElementById('statusBox');
-    function showStatus(text, type = 'ok') {
-      statusBox.style.display = 'block';
-      statusBox.textContent = text;
-      statusBox.className = 'status ' + (type === 'err' ? 'err' : 'ok');
-      setTimeout(() => { statusBox.style.display = 'none'; }, 6000);
-    }
-
-    // Tab UI
-    const tabSignin = document.getElementById('tab-signin');
-    const tabSignup = document.getElementById('tab-signup');
-    function showSignin() {
-      tabSignin.classList.add('active'); tabSignup.classList.remove('active');
-      document.getElementById('form-signin').style.display = ''; document.getElementById('form-signup').style.display = 'none'; document.getElementById('form-forgot').style.display = 'none';
-    }
-    function showSignup() {
-      tabSignup.classList.add('active'); tabSignin.classList.remove('active');
-      document.getElementById('form-signup').style.display = ''; document.getElementById('form-signin').style.display = 'none'; document.getElementById('form-forgot').style.display = 'none';
-    }
-    function showForgot() {
-      tabSignin.classList.remove('active'); tabSignup.classList.remove('active');
-      document.getElementById('form-forgot').style.display = ''; document.getElementById('form-signin').style.display = 'none'; document.getElementById('form-signup').style.display = 'none';
-    }
-    tabSignin.onclick = showSignin;
-    tabSignup.onclick = showSignup;
-
-    // Sign up
-    async function signUp() {
-      const name = document.getElementById('su-name').value.trim();
-      const email = document.getElementById('su-email').value.trim();
-      const password = document.getElementById('su-password').value;
-
-      if (!name || !email || password.length < 6) {
-        showStatus('Please enter valid name, email and a password with at least 6 characters', 'err');
-        return;
-      }
-
-      try {
-        const credential = await auth.createUserWithEmailAndPassword(email, password);
-        const user = credential.user;
-
-        // Save a minimal profile to Realtime Database
-        await db.ref('users/' + user.uid).set({
-          name: name,
-          email: email,
-          createdAt: Date.now()
-        });
-
-        showStatus('Account created and profile saved. Signed in.', 'ok');
-        updateCurrentUserUI(user);
-        setTimeout(() => {
-          window.location.href = 'dashboard.html';
-        }, 500);
-      } catch (err) {
-        showStatus('Sign up failed: ' + err.message, 'err');
-      }
-    }
-
-    // Sign in
-    async function signIn() {
-    const email = document.getElementById('si-email').value.trim();
-    const password = document.getElementById('si-password').value;
-  
-    try {
-      const credential = await auth.signInWithEmailAndPassword(email, password);
-      const user = credential.user;
-      showStatus('Signed in successfully. Redirecting...', 'ok');
-      updateCurrentUserUI(user);
-      
-      // Redirect to dashboard after successful sign in
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 500); // 0.5 second delay to show success message
-      
-    } catch (err) {
-      showStatus('Sign in failed: ' + err.message, 'err');
-    }
-  }
-
-    // Send password reset
-    async function sendReset() {
-      const email = document.getElementById('fp-email').value.trim();
-      if (!email) { showStatus('Enter your email address', 'err'); return; }
-      try {
-        await auth.sendPasswordResetEmail(email);
-        showStatus('Password reset email sent. Check your inbox.', 'ok');
-        showSignin();
-      } catch (err) {
-        showStatus('Reset failed: ' + err.message, 'err');
-      }
-    }
-
-    // Sign out
-    async function signOut() {
-      try {
-        await auth.signOut();
-        showStatus('Signed out', 'ok');
-        updateCurrentUserUI(null);
-      } catch (err) {
-        showStatus('Sign out failed: ' + err.message, 'err');
-      }
-    }
-
-    // Update UI when auth state changes
-    const currentUserEl = document.getElementById('currentUser');
-    function updateCurrentUserUI(user) {
-      if (user) {
-        currentUserEl.textContent = user.email + ' (' + user.uid.slice(0,6) + ')';
-      } else {
-        currentUserEl.textContent = 'Not signed in';
-      }
-    }
-
-    auth.onAuthStateChanged(async (user) => {
-  updateCurrentUserUI(user);
-  
-  if (user) {
-    // Check if we're on the login page and user is already authenticated
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
-      // User is already logged in, redirect to dashboard
-      showStatus('Already signed in. Redirecting to dashboard...', 'ok');
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1000);
-      return;
-    }
-    
-    // Optionally read profile info from database
-    const snapshot = await db.ref('users/' + user.uid).get();
-    if (snapshot.exists()) {
-      // You can use snapshot.val() to fill UI
-    } else {
-      // If profile missing create minimal
-      await db.ref('users/' + user.uid).set({ 
-        email: user.email, 
-        createdAt: Date.now() 
-      });
-    }
-  }
-});
-
-    // Quick guard for GitHub Pages caching issue with realtime rules
-    // Ensure your Realtime Database rules allow authenticated users to read/write their profile
-  </script>
 </body>
 </html>
