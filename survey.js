@@ -60,7 +60,6 @@ document.getElementById('surveyForm').addEventListener('submit', async (e) => {
   }
 
   const formData = {
-    uid: currentUser.uid,
     email: email,
     ageGroup: e.target.ageGroup.value,
     goal: e.target.goal.value,
@@ -68,8 +67,10 @@ document.getElementById('surveyForm').addEventListener('submit', async (e) => {
     submittedAt: Date.now()
   };
 
-  const timestampKey = Date.now().toString(); // Unique key
-  await set(ref(db, 'responses/' + currentUser.uid + '/' + timestampKey), formData);
+  const safeEmailKey = email.replace(/\W/g, ''); // sanitize email for Firebase path
+  const responsesRef = ref(db, 'responses/' + safeEmailKey);
+  const newResponseRef = push(responsesRef); // requires push() to be imported
+  await set(newResponseRef, formData);
 
   alert("Survey submitted successfully!");
   e.target.reset();
