@@ -1,3 +1,5 @@
+import { db, ref, set } from './firebase.js';
+
 const container = document.getElementById("questionContainer");
 
 // Initial questions
@@ -10,7 +12,7 @@ const initialQuestions = [
 // Render all questions
 function renderQuestions() {
   container.innerHTML = "";
-  initialQuestions.forEach(q => {
+  initialQuestions.forEach((q, index) => {
     const block = document.createElement("div");
     block.className = "question-block";
     block.setAttribute("draggable", "true");
@@ -72,13 +74,13 @@ container.addEventListener("drop", e => {
 function reorderQuestions() {
   const blocks = container.querySelectorAll(".question-block");
   initialQuestions.length = 0;
-  blocks.forEach(block => {
+  blocks.forEach((block, index) => {
     const id = block.dataset.id;
     const label = block.querySelector("label").textContent;
     const input = block.querySelector("input, textarea, select");
     const type = input.tagName.toLowerCase() === "select" ? "select" : input.tagName.toLowerCase();
     const options = type === "select" ? Array.from(input.options).map(o => o.value) : undefined;
-    initialQuestions.push({ id, label, type, options });
+    initialQuestions.push({ id, label, type, options, sequence: index + 1 });
   });
 }
 
@@ -149,16 +151,19 @@ window.addNewQuestion = function () {
   closeAddQuestionModal();
 };
 
-// Submit updated form
-document.getElementById("surveyForm").addEventListener("submit", function (e) {
+// Submit updated form to Firebase
+document.getElementById("surveyForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  console.log("Updated Survey Structure:", initialQuestions);
+  reorderQuestions(); // ensure sequence numbers are fresh
 
-  // Example: Save to localStorage (or send to Firebase)
-  localStorage.setItem("updatedSurveyForm", JSON.stringify(initialQuestions));
+  const emailKey = new URLSearchParams(window.location.search).get("email");
+  if (!emailKey) return alert("Missing email identifier in URL.");
 
-  alert("Survey form updated successfully!");
+  const formRef = ref(db, 'surveyForms/' + emailKey);
+  await set(formRef, initialQuestions);
+
+  alert("Survey form updated and saved to Firebase!");
 });
 
 renderQuestions();
