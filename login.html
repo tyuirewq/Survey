@@ -2,152 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Admin Access – Investment Survey</title>
+  <title>Login with Firebase</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Firebase compat SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.5.2/firebase-database-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg: #0f172a;
       --card: #0b1220;
-      --accent: #10b981;
+      --accent: #7c3aed;
       --muted: #94a3b8;
+      --success: #10b981;
       --danger: #ef4444;
-      --success: #22c55e;
       color-scheme: dark;
     }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(180deg,#0f172a 0%, #1e293b 100%);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#020617 0%, #061428 60%);
       min-height: 100vh;
       display: grid;
       place-items: center;
       padding: 24px;
-      color: #e2e8f0;
+      color: #e6eef8;
     }
     .container {
-      max-width: 960px;
       width: 100%;
+      max-width: 980px;
       display: grid;
       grid-template-columns: 1fr 420px;
-      gap: 32px;
+      gap: 28px;
       align-items: center;
     }
     .hero {
-      padding: 32px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.05);
+      padding: 28px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
     }
-    .hero h1 {
-      font-size: 30px;
-      margin-bottom: 12px;
-      color: var(--accent);
-    }
-    .hero p {
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .hero h1 { margin: 0 0 8px 0; font-size: 28px; }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.5; }
     .card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 24px;
-      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      padding: 22px;
+      border-radius: 12px;
     }
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+    .tabs { display:flex; gap:8px; margin-bottom: 18px; }
     .tab {
       flex: 1;
-      padding: 12px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 10px;
-      text-align: center;
-      cursor: pointer;
-      color: var(--muted);
-      font-weight: 600;
-    }
-    .tab.active {
-      background: linear-gradient(90deg, var(--accent), #059669);
-      color: white;
-      box-shadow: 0 4px 12px rgba(16,185,129,0.2);
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    label {
-      font-size: 14px;
-      color: var(--muted);
-    }
-    input {
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
+      padding:10px 12px;
       background: rgba(255,255,255,0.02);
-      color: #e2e8f0;
-      font-size: 15px;
+      border-radius: 8px;
+      text-align:center;
+      cursor:pointer;
+      color:var(--muted);
+      user-select:none;
+    }
+    .tab.active { background: linear-gradient(90deg, rgba(124,58,237,0.16), rgba(124,58,237,0.08)); color: #fff; box-shadow: 0 6px 18px rgba(124,58,237,0.08); }
+    form { display:flex; flex-direction:column; gap:12px; }
+    label { font-size:13px; color:var(--muted); }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.01);
+      color: #e6eef8;
+      font-size:14px;
       outline: none;
     }
+    .row { display:flex; gap:8px; }
     button.primary {
-      background: linear-gradient(90deg, var(--accent), #059669);
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
+      background: linear-gradient(90deg, var(--accent), #5b21b6);
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
     }
     button.ghost {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--muted);
-      padding: 10px;
-      border-radius: 10px;
-      cursor: pointer;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+      padding:10px;
+      border-radius:10px;
+      cursor:pointer;
     }
-    .status {
-      font-size: 14px;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-    }
-    .status.ok {
-      background: rgba(34,197,94,0.1);
-      color: var(--success);
-      border: 1px solid rgba(34,197,94,0.2);
-    }
-    .status.err {
-      background: rgba(239,68,68,0.1);
-      color: var(--danger);
-      border: 1px solid rgba(239,68,68,0.2);
-    }
+    .muted { color:var(--muted); font-size:13px; }
+    .status { font-size:13px; padding:8px 10px; border-radius:8px; }
+    .status.ok { background: rgba(16,185,129,0.08); color:var(--success); border:1px solid rgba(16,185,129,0.08); }
+    .status.err { background: rgba(239,68,68,0.06); color:var(--danger); border:1px solid rgba(239,68,68,0.06); }
+    .small-link { color: #c7b3ff; cursor:pointer; text-decoration: underline; font-size:13px; }
+    .center { text-align:center; }
     @media (max-width: 880px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      .hero {
-        order: 2;
-      }
+      .container { grid-template-columns: 1fr; }
+      .hero { order: 2; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="hero card">
-      <h1>Admin Portal</h1>
-      <p>Login or create your admin account to manage investment survey responses, view analytics, and configure survey settings securely.</p>
+      <h1>Welcome to SecureApp</h1>
+      <p>Sign in to access your dashboard, or create a new account. Password resets are handled securely via your email.</p>
+      <hr style="margin:16px 0; border: none; border-top:1px solid rgba(255,255,255,0.03);" />
+      <div class="muted">Why this setup</div>
+      <ul style="color:var(--muted); margin-top:8px;">
+        <li>Authentication by Firebase Auth so passwords never land in your DB</li>
+        <li>Small user profile stored in Realtime Database for app data</li>
+        <li>Works directly on GitHub Pages without bundlers</li>
+      </ul>
     </div>
 
-    <div class="card">
-      <div class="tabs">
-        <div id="tab-signin" class="tab active">Login</div>
+    <div class="card" style="padding:18px;">
+      <div class="tabs" role="tablist">
+        <div id="tab-signin" class="tab active">Sign In</div>
         <div id="tab-signup" class="tab">Sign Up</div>
       </div>
 
@@ -155,40 +130,59 @@
 
       <div id="form-signin">
         <form onsubmit="event.preventDefault(); signIn();">
-          <label>Email</label>
+          <label for="si-email">Email</label>
           <input id="si-email" type="email" required />
-          <label>Password</label>
+          <label for="si-password">Password</label>
           <input id="si-password" type="password" required />
-          <button class="primary" type="submit">Login</button>
-          <button type="button" class="ghost" onclick="showForgot()">Forgot Password</button>
+          <div class="row" style="margin-top:6px;">
+            <button class="primary" type="submit">Sign In</button>
+            <button type="button" class="ghost" onclick="showForgot()">Forgot Password</button>
+          </div>
+          <div class="center" style="margin-top:8px;">
+            <span class="muted">No account?</span>
+            <span class="small-link" onclick="showSignup()"> Create one</span>
+          </div>
         </form>
       </div>
 
       <div id="form-signup" style="display:none;">
         <form onsubmit="event.preventDefault(); signUp();">
-          <label>Full Name</label>
+          <label for="su-name">Full name</label>
           <input id="su-name" type="text" required />
-          <label>Email</label>
+          <label for="su-email">Email</label>
           <input id="su-email" type="email" required />
-          <label>Password</label>
+          <label for="su-password">Password</label>
           <input id="su-password" type="password" minlength="6" required />
-          <button class="primary" type="submit">Create Account</button>
-          <button type="button" class="ghost" onclick="showSignin()">Back to Login</button>
+          <div class="row" style="margin-top:6px;">
+            <button class="primary" type="submit">Create account</button>
+            <button type="button" class="ghost" onclick="showSignin()">Back to Sign In</button>
+          </div>
         </form>
       </div>
 
       <div id="form-forgot" style="display:none;">
         <form onsubmit="event.preventDefault(); sendReset();">
-          <label>Enter your email</label>
+          <label for="fp-email">Enter your account email</label>
           <input id="fp-email" type="email" required />
-          <button class="primary" type="submit">Send Reset Email</button>
-          <button type="button" class="ghost" onclick="showSignin()">Cancel</button>
+          <div class="row" style="margin-top:6px;">
+            <button class="primary" type="submit">Send reset email</button>
+            <button type="button" class="ghost" onclick="showSignin()">Cancel</button>
+          </div>
         </form>
+      </div>
+
+      <hr style="margin:16px 0; border: none; border-top:1px solid rgba(255,255,255,0.03);" />
+
+      <div class="center muted">
+        Signed in user:
+        <span id="currentUser">Not signed in</span>
+        <div style="margin-top:8px;">
+          <button class="ghost" onclick="signOut()">Sign Out</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Firebase logic remains unchanged -->
   <script>
     // Replace with your Firebase project config
     const firebaseConfig = {
