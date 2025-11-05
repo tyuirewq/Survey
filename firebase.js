@@ -1,16 +1,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
 
+// firebase.js
 const firebaseConfig = {
-  apiKey: "AIzaSyDh09dzHrlEjm2TFkAy490Jdx8ay_KgI00",
-  authDomain: "questionnaire-f0638.firebaseapp.com",
-  databaseURL: "https://questionnaire-f0638-default-rtdb.firebaseio.com",
-  projectId: "questionnaire-f0638",
-  storageBucket: "questionnaire-f0638.firebasestorage.app",
-  messagingSenderId: "869731192665",
-  appId: "1:869731192665:web:209f53e0def000c6644648",
-  measurementId: "G-P5JC47G3Z2"
+  apiKey: "AIzaSyBImV4-QroenwecFE2Nk53MeJGQt-aWE2o",
+  authDomain: "studio-1263535307-205e6.firebaseapp.com",
+  databaseURL: "https://studio-1263535307-205e6-default-rtdb.firebaseio.com",
+  projectId: "studio-1263535307-205e6",
+  storageBucket: "studio-1263535307-205e6.firebasestorage.app",
+  messagingSenderId: "240447378915",
+  appId: "1:240447378915:web:a69dc620dab3158851fcd6"
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
