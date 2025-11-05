@@ -1,10 +1,16 @@
-import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js";
-
 // auth.js
+import { auth, db } from './firebase.js';
+
+// DOM references
+const tabSignin = document.getElementById('tab-signin');
+const tabSignup = document.getElementById('tab-signup');
+const formSignin = document.getElementById('form-signin');
+const formSignup = document.getElementById('form-signup');
+const formForgot = document.getElementById('form-forgot');
 const statusBox = document.getElementById('statusBox');
 const currentUserEl = document.getElementById('currentUser');
 
+// UI helpers
 function showStatus(text, type = 'ok') {
   statusBox.style.display = 'block';
   statusBox.textContent = text;
@@ -43,19 +49,34 @@ function showForgot() {
   formSignup.style.display = 'none';
 }
 
-tabSignin.onclick = showSignin;
-tabSignup.onclick = showSignup;
+// Event bindings
+tabSignin?.addEventListener('click', showSignin);
+tabSignup?.addEventListener('click', showSignup);
 
-async function signUp() {
+formSignin?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('si-email').value.trim();
+  const password = document.getElementById('si-password').value;
+  try {
+    const credential = await auth.signInWithEmailAndPassword(email, password);
+    const user = credential.user;
+    showStatus('Signed in successfully. Redirecting...', 'ok');
+    updateCurrentUserUI(user);
+    setTimeout(() => window.location.href = 'dashboard.html', 500);
+  } catch (err) {
+    showStatus('Sign in failed: ' + err.message, 'err');
+  }
+});
+
+formSignup?.addEventListener('submit', async (e) => {
+  e.preventDefault();
   const name = document.getElementById('su-name').value.trim();
   const email = document.getElementById('su-email').value.trim();
   const password = document.getElementById('su-password').value;
-
   if (!name || !email || password.length < 6) {
     showStatus('Please enter valid name, email and a password with at least 6 characters', 'err');
     return;
   }
-
   try {
     const credential = await auth.createUserWithEmailAndPassword(email, password);
     const user = credential.user;
@@ -66,27 +87,12 @@ async function signUp() {
   } catch (err) {
     showStatus('Sign up failed: ' + err.message, 'err');
   }
-}
+});
 
-async function signIn() {
-  const email = document.getElementById('si-email').value.trim();
-  const password = document.getElementById('si-password').value;
-
-  try {
-    const credential = await auth.signInWithEmailAndPassword(email, password);
-    const user = credential.user;
-    showStatus('Signed in successfully. Redirecting...', 'ok');
-    updateCurrentUserUI(user);
-    setTimeout(() => window.location.href = 'dashboard.html', 500);
-  } catch (err) {
-    showStatus('Sign in failed: ' + err.message, 'err');
-  }
-}
-
-async function sendReset() {
+formForgot?.addEventListener('submit', async (e) => {
+  e.preventDefault();
   const email = document.getElementById('fp-email').value.trim();
   if (!email) return showStatus('Enter your email address', 'err');
-
   try {
     await auth.sendPasswordResetEmail(email);
     showStatus('Password reset email sent. Check your inbox.', 'ok');
@@ -94,9 +100,9 @@ async function sendReset() {
   } catch (err) {
     showStatus('Reset failed: ' + err.message, 'err');
   }
-}
+});
 
-async function signOut() {
+document.querySelector('button[onclick="signOut()"]')?.addEventListener('click', async () => {
   try {
     await auth.signOut();
     showStatus('Signed out', 'ok');
@@ -104,8 +110,9 @@ async function signOut() {
   } catch (err) {
     showStatus('Sign out failed: ' + err.message, 'err');
   }
-}
+});
 
+// Auth state listener
 auth.onAuthStateChanged(async (user) => {
   updateCurrentUserUI(user);
   if (user && (location.pathname.includes('index.html') || location.pathname === '/')) {
@@ -113,7 +120,6 @@ auth.onAuthStateChanged(async (user) => {
     setTimeout(() => window.location.href = 'dashboard.html', 1000);
     return;
   }
-
   if (user) {
     const snapshot = await db.ref('users/' + user.uid).get();
     if (!snapshot.exists()) {
