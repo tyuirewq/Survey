@@ -1,4 +1,4 @@
-import { auth, db, ref, set, get, onAuthStateChanged } from './firebase.js';
+import { auth, db, ref, set, get, onAuthStateChanged, push } from './firebase.js';
 
 let currentUser = null;
 let otpCode = "";
@@ -66,8 +66,11 @@ document.getElementById('surveyForm').addEventListener('submit', async (e) => {
     type: e.target.type.value,
     submittedAt: Date.now()
   };
+  const responsesRef = ref(db, 'responses/' + currentUser.uid);
+  const newResponseRef = push(responsesRef); // creates a unique child
+  await set(newResponseRef, formData);
 
-  await set(ref(db, 'responses/' + currentUser.uid), formData);
+  //await set(ref(db, 'responses/' + currentUser.uid), formData);
   alert("Survey submitted successfully!");
   e.target.reset();
 });
