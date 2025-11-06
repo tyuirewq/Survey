@@ -9,22 +9,137 @@
 <body class="bg-gradient-to-br from-green-400 to-indigo-600 min-h-screen flex items-center justify-center p-4">
   <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-2xl">
     <h2 class="text-2xl font-bold text-center text-indigo-700 mb-4">Investment Survey</h2>
+<form id="surveyForm" class="space-y-8">
+    <!-- PERSONAL INFO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+            <label>નામ</label>
+            <input id="name" name="name" type="text">
+        </div>
 
-    <form id="surveyForm" class="space-y-4">
-  <div id="dynamicQuestions"></div>
+        <div>
+            <label>જન્મ તારીખ</label>
+            <input id="dob" name="dob" type="text">
+        </div>
 
-  <div>
-    <label class="block text-sm font-medium text-gray-700">Email for OTP verification</label>
-    <input type="email" id="userEmail" required class="w-full p-2 border rounded" />
-    <button type="button" onclick="sendOTP()" class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Send OTP</button>
-  </div>
+        <div>
+            <label>એડ્રેસ</label>
+            <input id="address" name="address" type="text">
+        </div>
 
-  <div>
-    <label class="block text-sm font-medium text-gray-700">Enter OTP</label>
-    <input type="text" id="userOTP" required class="w-full p-2 border rounded" />
-  </div>
+        <div>
+            <label>વ્યવસાય</label>
+            <input id="occupation" name="occupation" type="text">
+        </div>
+    </div>
 
-  <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Submit Survey</button>
+    <!-- CHILD QUESTIONS -->
+    <div>
+        <h3>બાળક સંબંધિત પ્રશ્નો</h3>
+
+        <div>
+            <p>1) ઉચ્ચ અભ્યાસ માટે દર વર્ષે 1 લાખ?</p>
+            <label><input type="radio" name="child_q1" value="Yes"> હા</label>
+            <label><input type="radio" name="child_q1" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>2) 12 મા વીમો જોઈએ?</p>
+            <label><input type="radio" name="child_q2" value="Yes"> હા</label>
+            <label><input type="radio" name="child_q2" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>3) 18 વર્ષે બાઈક જોઈએ?</p>
+            <label><input type="radio" name="child_q3" value="Yes"> હા</label>
+            <label><input type="radio" name="child_q3" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>4) લગ્ન માટે પૈસા જોઈએ?</p>
+            <label><input type="radio" name="child_q4" value="Yes"> હા</label>
+            <label><input type="radio" name="child_q4" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>5) દર મહિને ભવિષ્ય માટે રકમ?</p>
+            <label><input type="radio" name="child_q5" value="Yes"> હા</label>
+            <label><input type="radio" name="child_q5" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>6) સુરક્ષા માટે કવરેજ?</p>
+            <label><input type="radio" name="child_q6" value="Yes"> હા</label>
+            <label><input type="radio" name="child_q6" value="No"> ના</label>
+        </div>
+    </div>
+
+    <!-- PENSION SECTION -->
+    <div>
+        <h3>પેન્શન સંબંધિત પ્રશ્નો</h3>
+
+        <div>
+            <p>1) પેન્શનની વ્યવસ્થા છે?</p>
+            <label><input type="radio" name="pen_q1" value="Yes"> હા</label>
+            <label><input type="radio" name="pen_q1" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>2) નિવૃત્તિ જીવન?</p>
+            <label><input type="radio" name="pen_q2" value="કોઈ પર આધારિત"> કોઈ પર આધારિત</label>
+            <label><input type="radio" name="pen_q2" value="નોકરીમાં"> નોકરીમાં</label>
+            <label><input type="radio" name="pen_q2" value="પોતાના પર આધારિત"> પોતાના પર આધારિત</label>
+        </div>
+
+        <div>
+            <p>3) સરકાર તરફથી પેન્શન ગમે?</p>
+            <label><input type="radio" name="pen_q3" value="Yes"> હા</label>
+            <label><input type="radio" name="pen_q3" value="No"> ના</label>
+        </div>
+
+        <div>
+            <p>4) પેન્શન કઈ ઉંમરે?</p>
+            <label><input type="radio" name="pen_q4" value="50"> 50</label>
+            <label><input type="radio" name="pen_q4" value="55"> 55</label>
+            <label><input type="radio" name="pen_q4" value="60"> 60</label>
+            <label><input type="radio" name="pen_q4" value="65"> 65</label>
+        </div>
+
+        <div>
+            <p>5) દર મહિને પેન્શન કેટલું?</p>
+            <label><input type="radio" name="pen_q5" value="10000"> 10000</label>
+            <label><input type="radio" name="pen_q5" value="15000"> 15000</label>
+            <label><input type="radio" name="pen_q5" value="25000"> 25000</label>
+            <label><input type="radio" name="pen_q5" value="50000"> 50000</label>
+            <label><input type="radio" name="pen_q5" value="More"> વધુ</label>
+        </div>
+    </div>
+
+    <!-- EMAIL + OTP -->
+    <div>
+        <label>Email</label>
+        <input id="userEmail" name="email" type="text">
+
+        <button type="button" onclick="sendOTP()"
+            class="bg-blue-600 text-white px-4 py-2 rounded mt-2">
+            Send OTP
+        </button>
+
+        <div id="otpBox" class="hidden mt-4">
+            <label>Enter OTP</label>
+            <input id="userOTP" type="text">
+
+            <div class="flex items-center gap-4 mt-2">
+                <span id="timer" class="text-red-500"></span>
+                <button id="resendBtn" onclick="sendOTP()" type="button" class="hidden bg-green-600 text-white px-3 py-2 rounded">Resend</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="w-full bg-purple-600 text-white py-3 rounded-lg mt-4">
+        Submit Form
+    </button>
+
 </form>
   </div>
 
